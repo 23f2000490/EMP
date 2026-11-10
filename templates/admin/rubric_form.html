@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{{ 'Edit' if rubric else 'New' }} Criterion{% endblock %}
+{% block admin_content %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-1">{{ 'Edit Criterion' if rubric else 'New Criterion' }}</h4>
+                <p class="text-muted">{{ exam.name }} (max marks: {{ exam.max_marks }})</p>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Criterion Name</label>
+                        <input type="text" name="criterion_name" class="form-control"
+                               value="{{ rubric.criterion_name if rubric else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Maximum Marks</label>
+                        <input type="number" name="max_marks" min="1" class="form-control"
+                               value="{{ rubric.max_marks if rubric else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Weightage (%)</label>
+                        <input type="number" name="weightage" min="0" max="100" step="0.1" class="form-control"
+                               value="{{ rubric.weightage if rubric else 0 }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3">{{ rubric.description if rubric and rubric.description else '' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ 'Update' if rubric else 'Add' }}</button>
+                    <a href="{{ url_for('admin.rubrics', exam_id=exam.id) }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

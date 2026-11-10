@@ -1,0 +1,30 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Change Examiner{% endblock %}
+{% block admin_content %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-1">Change Examiner</h4>
+                <p class="text-muted">
+                    {{ slot.examination.name }} | {{ slot.slot_date }}
+                    {{ slot.start_time.strftime('%H:%M') }}-{{ slot.end_time.strftime('%H:%M') }}<br>
+                    Current examiner: <strong>{{ slot.examiner.user.full_name }}</strong>
+                </p>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">New examiner</label>
+                        <select name="examiner_id" class="form-select" required>
+                            {% for p in candidates %}
+                            <option value="{{ p.id }}" {{ 'selected' if p.id == slot.examiner_id }}>{{ p.user.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-primary">Update</button>
+                    <a href="{{ url_for('admin.slots') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

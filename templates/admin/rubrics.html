@@ -1,0 +1,51 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Rubrics{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-0">Rubrics: {{ exam.name }}</h3>
+        <small class="text-muted">{{ exam.course.code }} | {{ exam.exam_type }}</small>
+    </div>
+    <div>
+        <a href="{{ url_for('admin.examinations') }}" class="btn btn-secondary">Back</a>
+        <a href="{{ url_for('admin.rubric_new', exam_id=exam.id) }}" class="btn btn-primary">+ New Criterion</a>
+    </div>
+</div>
+
+<div class="alert {{ 'alert-success' if total == exam.max_marks else 'alert-info' }}">
+    Rubric marks allocated: <strong>{{ total }}</strong> of <strong>{{ exam.max_marks }}</strong>
+    {% if total < exam.max_marks %}({{ exam.max_marks - total }} still unallocated){% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th><th>Criterion</th><th>Max Marks</th>
+                    <th>Weightage (%)</th><th>Description</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in exam.rubrics %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.criterion_name }}</td>
+                    <td>{{ r.max_marks }}</td>
+                    <td>{{ r.weightage }}</td>
+                    <td>{{ r.description or '-' }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.rubric_edit', rubric_id=r.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form method="POST" action="{{ url_for('admin.rubric_delete', rubric_id=r.id) }}" class="d-inline">
+                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No criteria yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

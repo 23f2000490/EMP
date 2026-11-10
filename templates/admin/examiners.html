@@ -1,0 +1,63 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Examiners{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Examiners</h3>
+    <a href="{{ url_for('admin.examiner_new') }}" class="btn btn-primary">+ Add Examiner</a>
+</div>
+<form method="GET" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search by name or ID">
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-primary">Search</button>
+        <a href="{{ request.path }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th><th>Name</th><th>Email</th><th>Contact</th>
+                    <th>Department</th><th>Status</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in profiles %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.user.full_name }}</td>
+                    <td>{{ p.user.email }}</td>
+                    <td>{{ p.contact_details or '-' }}</td>
+                    <td>{{ p.department or '-' }}</td>
+                    <td>
+                        {% if p.status == 'Approved' %}<span class="badge bg-success">Approved</span>
+                        {% elif p.status == 'Pending' %}<span class="badge bg-warning text-dark">Pending</span>
+                        {% else %}<span class="badge bg-secondary">Deactivated</span>{% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.examiner_view', profile_id=p.id) }}" class="btn btn-sm btn-outline-primary">View/Edit</a>
+                        {% if p.status != 'Approved' %}
+                        <form method="POST" action="{{ url_for('admin.examiner_status', profile_id=p.id) }}" class="d-inline">
+                            <input type="hidden" name="status" value="Approved">
+                            <button class="btn btn-sm btn-success">{{ 'Approve' if p.status == 'Pending' else 'Reactivate' }}</button>
+                        </form>
+                        {% endif %}
+                        {% if p.status != 'Deactivated' %}
+                        <form method="POST" action="{{ url_for('admin.examiner_status', profile_id=p.id) }}" class="d-inline">
+                            <input type="hidden" name="status" value="Deactivated">
+                            <button class="btn btn-sm btn-outline-danger">Deactivate</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No examiners yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

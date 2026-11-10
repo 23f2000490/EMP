@@ -1,0 +1,41 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Students{% endblock %}
+{% block admin_content %}
+<h3 class="mb-3">Students</h3>
+
+<form method="GET" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search by name, email or ID">
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-primary">Search</button>
+        <a href="{{ request.path }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th>
+                    <th>Department</th><th>Bookings</th><th>Joined</th></tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.full_name }}</td>
+                    <td>{{ s.email }}</td>
+                    <td>{{ s.phone or '-' }}</td>
+                    <td>{{ s.department or '-' }}</td>
+                    <td>{{ s.bookings|length }}</td>
+                    <td>{{ s.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No students found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

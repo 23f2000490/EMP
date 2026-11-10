@@ -1,0 +1,89 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{{ 'Edit' if exam else 'New' }} Examination{% endblock %}
+{% block admin_content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">{{ 'Edit Examination' if exam else 'New Examination' }}</h4>
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Course</label>
+                            <select name="course_id" class="form-select" required>
+                                {% for c in courses %}
+                                <option value="{{ c.id }}" {{ 'selected' if exam and exam.course_id == c.id }}>{{ c.code }} - {{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Examination Name</label>
+                            <input type="text" name="name" class="form-control"
+                                   value="{{ exam.name if exam else '' }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Type</label>
+                            <select name="exam_type" class="form-select">
+                                {% for t in types %}
+                                <option value="{{ t }}" {{ 'selected' if exam and exam.exam_type == t }}>{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Duration (minutes)</label>
+                            <input type="number" name="duration" min="1" class="form-control"
+                                   value="{{ exam.duration if exam else '' }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Maximum Marks</label>
+                            <input type="number" name="max_marks" min="1" class="form-control"
+                                   value="{{ exam.max_marks if exam else '' }}" required>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-2">Timelines</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Slot Creation Start</label>
+                            <input type="date" name="slot_creation_start" class="form-control"
+                                   value="{{ exam.slot_creation_start or '' if exam else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Slot Creation End</label>
+                            <input type="date" name="slot_creation_end" class="form-control"
+                                   value="{{ exam.slot_creation_end or '' if exam else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Slot Booking Start</label>
+                            <input type="date" name="booking_start" class="form-control"
+                                   value="{{ exam.booking_start or '' if exam else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Slot Booking End</label>
+                            <input type="date" name="booking_end" class="form-control"
+                                   value="{{ exam.booking_end or '' if exam else '' }}">
+                        </div>
+                    </div>
+
+                    <h6 class="mt-2">Assigned Examiners (approved only)</h6>
+                    <div class="mb-3">
+                        {% for p in examiners %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="examiner_ids"
+                                   value="{{ p.id }}" id="ex{{ p.id }}"
+                                   {{ 'checked' if exam and p in exam.examiners }}>
+                            <label class="form-check-label" for="ex{{ p.id }}">{{ p.user.full_name }} ({{ p.department or 'no dept' }})</label>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No approved examiners yet.</p>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">{{ 'Update' if exam else 'Create' }}</button>
+                    <a href="{{ url_for('admin.examinations') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

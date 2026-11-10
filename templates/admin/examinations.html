@@ -1,0 +1,63 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Examinations{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Examinations</h3>
+    <a href="{{ url_for('admin.examination_new') }}" class="btn btn-primary">+ New Examination</a>
+</div>
+<form method="GET" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search by name or ID">
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-primary">Search</button>
+        <a href="{{ request.path }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th><th>Course</th><th>Name</th><th>Type</th>
+                    <th>Duration</th><th>Max</th><th>Slot Creation</th>
+                    <th>Booking</th><th>Examiners</th><th>Status</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in exams %}
+                <tr>
+                    <td>{{ e.id }}</td>
+                    <td>{{ e.course.code }}</td>
+                    <td>{{ e.name }}</td>
+                    <td>{{ e.exam_type }}</td>
+                    <td>{{ e.duration }} min</td>
+                    <td>{{ e.max_marks }}</td>
+                    <td>{{ e.slot_creation_start or '-' }}<br>to {{ e.slot_creation_end or '-' }}</td>
+                    <td>{{ e.booking_start or '-' }}<br>to {{ e.booking_end or '-' }}</td>
+                    <td>{{ e.examiners|length }}</td>
+                    <td><span class="badge bg-info text-dark">{{ e.status }}</span></td>
+                    <td>
+                        <a href="{{ url_for('admin.examination_edit', exam_id=e.id) }}" class="btn btn-sm btn-outline-primary mb-1">Edit</a>
+                        <a href="{{ url_for('admin.rubrics', exam_id=e.id) }}" class="btn btn-sm btn-outline-secondary mb-1">Rubrics</a>
+                        <form method="POST" action="{{ url_for('admin.examination_delete', exam_id=e.id) }}" class="d-inline">
+                            <button class="btn btn-sm btn-outline-danger mb-1">Delete</button>
+                        </form>
+                        <br>
+                        {% for new_status, label, style in transitions[e.status] %}
+                        <form method="POST" action="{{ url_for('admin.examination_status', exam_id=e.id) }}" class="d-inline">
+                            <input type="hidden" name="status" value="{{ new_status }}">
+                            <button class="btn btn-sm btn-{{ style }}">{{ label }}</button>
+                        </form>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="11" class="text-center text-muted py-4">No examinations yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

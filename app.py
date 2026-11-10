@@ -2,6 +2,7 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, ExaminerProfile
+from admin_routes import admin_bp
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "change-this-later"
@@ -9,9 +10,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///emp.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
-
+app.register_blueprint(admin_bp)
 DASHBOARDS = {
-    "Admin": "admin_dashboard",
+    "Admin": "admin.dashboard",
     "Examiner": "examiner_dashboard",
     "Student": "student_dashboard",
 }
@@ -126,11 +127,6 @@ def logout():
     flash("Logged out.", "info")
     return redirect(url_for("login"))
 
-
-@app.route("/admin/dashboard")
-@role_required("Admin")
-def admin_dashboard():
-    return render_template("admin_dashboard.html")
 
 
 @app.route("/examiner/dashboard")

@@ -1,0 +1,43 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Courses{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Courses</h3>
+    <a href="{{ url_for('admin.course_new') }}" class="btn btn-primary">+ New Course</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th><th>Code</th><th>Name</th>
+                    <th>Description</th><th>Status</th><th>Exams</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in courses %}
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.code }}</td>
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.description or '-' }}</td>
+                    <td>
+                        <span class="badge {{ 'bg-success' if c.status == 'Active' else 'bg-secondary' }}">{{ c.status }}</span>
+                    </td>
+                    <td>{{ c.examinations|length }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.course_edit', course_id=c.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form method="POST" action="{{ url_for('admin.course_delete', course_id=c.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No courses yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

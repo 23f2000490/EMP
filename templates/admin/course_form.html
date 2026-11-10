@@ -1,0 +1,38 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{{ 'Edit' if course else 'New' }} Course{% endblock %}
+{% block admin_content %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">{{ 'Edit Course' if course else 'New Course' }}</h4>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Course Code</label>
+                        <input type="text" name="code" class="form-control"
+                               value="{{ course.code if course else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control"
+                               value="{{ course.name if course else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3">{{ course.description if course and course.description else '' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Active" {{ 'selected' if not course or course.status == 'Active' }}>Active</option>
+                            <option value="Inactive" {{ 'selected' if course and course.status == 'Inactive' }}>Inactive</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ 'Update' if course else 'Create' }}</button>
+                    <a href="{{ url_for('admin.courses') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

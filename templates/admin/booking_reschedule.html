@@ -1,0 +1,38 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Reschedule Booking{% endblock %}
+{% block admin_content %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-1">Reschedule Booking #{{ booking.id }}</h4>
+                <p class="text-muted">
+                    {{ booking.student.full_name }} | {{ booking.examination.name }}<br>
+                    Current slot: {{ booking.slot.slot_date }}
+                    {{ booking.slot.start_time.strftime('%H:%M') }}-{{ booking.slot.end_time.strftime('%H:%M') }}
+                </p>
+                {% if options %}
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Move to slot</label>
+                        <select name="slot_id" class="form-select" required>
+                            {% for s in options %}
+                            <option value="{{ s.id }}">
+                                {{ s.slot_date }} {{ s.start_time.strftime('%H:%M') }}-{{ s.end_time.strftime('%H:%M') }}
+                                | {{ s.examiner.user.full_name }} | {{ s.available_seats }} seat(s) left
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-primary">Reschedule</button>
+                    <a href="{{ url_for('admin.bookings') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+                {% else %}
+                <div class="alert alert-warning">No other slot with free seats is available for this examination.</div>
+                <a href="{{ url_for('admin.bookings') }}" class="btn btn-secondary">Back</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

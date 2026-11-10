@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm">
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.courses') }}">Courses</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.examinations') }}">Examinations</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.examiners') }}">Examiners</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.students') }}">Students</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.slots') }}">Slots</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.bookings') }}">Bookings</a></li>
+</ul>
+{% block admin_content %}{% endblock %}
+{% endblock %}
