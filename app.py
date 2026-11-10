@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, ExaminerProfile
 from admin_routes import admin_bp
-
+from examiner_routes import examiner_bp
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "change-this-later"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///emp.db"
@@ -11,9 +11,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 app.register_blueprint(admin_bp)
+app.register_blueprint(examiner_bp)
 DASHBOARDS = {
     "Admin": "admin.dashboard",
-    "Examiner": "examiner_dashboard",
+    "Examiner": "examiner.dashboard",
     "Student": "student_dashboard",
 }
 
@@ -129,10 +130,7 @@ def logout():
 
 
 
-@app.route("/examiner/dashboard")
-@role_required("Examiner")
-def examiner_dashboard():
-    return render_template("examiner_dashboard.html")
+
 
 
 @app.route("/student/dashboard")

@@ -1,0 +1,38 @@
+{% extends "examiner/base_examiner.html" %}
+{% block title %}My Profile{% endblock %}
+{% block examiner_content %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-1">My Profile</h4>
+                <p class="text-muted">{{ profile.user.email }} | Status: {{ profile.status }}</p>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="full_name" class="form-control"
+                               value="{{ profile.user.full_name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control"
+                               value="{{ profile.user.phone or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Details</label>
+                        <input type="text" name="contact_details" class="form-control"
+                               value="{{ profile.contact_details or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <input type="text" name="department" class="form-control"
+                               value="{{ profile.department or '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="{{ url_for('examiner.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

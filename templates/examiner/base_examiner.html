@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm">
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('examiner.dashboard') }}">Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('examiner.slots') }}">My Slots</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('examiner.students') }}">Booked Students</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('examiner.profile') }}">Profile</a></li>
+</ul>
+{% block examiner_content %}{% endblock %}
+{% endblock %}
