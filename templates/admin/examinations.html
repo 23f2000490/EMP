@@ -51,6 +51,10 @@
                             <button class="btn btn-sm btn-{{ style }}">{{ label }}</button>
                         </form>
                         {% endfor %}
+                        <form method="POST" action="{{ url_for('admin.examination_publish', exam_id=e.id) }}" class="d-inline">
+                            <button class="btn btn-sm btn-{{ 'warning' if e.results_published else 'outline-success' }}">
+                                {{ 'Unpublish Results' if e.results_published else 'Publish Results' }}</button>
+                        </form>
                     </td>
                 </tr>
                 {% else %}

@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, ExaminerProfile
 from admin_routes import admin_bp
 from examiner_routes import examiner_bp
+from student_routes import student_bp
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "change-this-later"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///emp.db"
@@ -12,10 +13,11 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 app.register_blueprint(admin_bp)
 app.register_blueprint(examiner_bp)
+app.register_blueprint(student_bp)
 DASHBOARDS = {
     "Admin": "admin.dashboard",
     "Examiner": "examiner.dashboard",
-    "Student": "student_dashboard",
+    "Student": "student.dashboard",
 }
 
 
@@ -131,12 +133,6 @@ def logout():
 
 
 
-
-
-@app.route("/student/dashboard")
-@role_required("Student")
-def student_dashboard():
-    return render_template("student_dashboard.html")
 
 
 if __name__ == "__main__":

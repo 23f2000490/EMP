@@ -1,0 +1,29 @@
+{% extends "student/base_student.html" %}
+{% block title %}Results{% endblock %}
+{% block student_content %}
+<h3 class="mb-3">Published Results</h3>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Examination</th><th>Course</th><th>Date</th>
+                    <th>Marks</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td>{{ b.examination.name }}</td>
+                    <td>{{ b.examination.course.code }}</td>
+                    <td>{{ b.slot.slot_date }}</td>
+                    <td><strong>{{ b.evaluation.total_marks }}</strong> / {{ b.examination.max_marks }}</td>
+                    <td><a href="{{ url_for('student.result_detail', booking_id=b.id) }}" class="btn btn-sm btn-outline-primary">Details &amp; Feedback</a></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">No published results yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

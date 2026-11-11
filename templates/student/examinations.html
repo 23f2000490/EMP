@@ -1,0 +1,67 @@
+{% extends "student/base_student.html" %}
+{% block title %}Examinations{% endblock %}
+{% block student_content %}
+<h3 class="mb-3">Examinations</h3>
+
+<form method="GET" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search name or course">
+    </div>
+    <div class="col-md-2">
+        <select name="course_id" class="form-select">
+            <option value="">All courses</option>
+            {% for c in courses %}
+            <option value="{{ c.id }}" {{ 'selected' if course_id == c.id }}>{{ c.code }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="exam_type" class="form-select">
+            <option value="">All types</option>
+            {% for t in types %}
+            <option value="{{ t }}" {{ 'selected' if exam_type == t }}>{{ t }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            {% for s in statuses %}
+            <option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-primary">Filter</button>
+        <a href="{{ request.path }}" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>ID</th><th>Course</th><th>Name</th><th>Type</th><th>Duration</th>
+                    <th>Max Marks</th><th>Booking Period</th><th>Status</th><th>You</th></tr>
+            </thead>
+            <tbody>
+                {% for e in exams %}
+                <tr>
+                    <td>{{ e.id }}</td>
+                    <td>{{ e.course.code }}</td>
+                    <td>{{ e.name }}</td>
+                    <td>{{ e.exam_type }}</td>
+                    <td>{{ e.duration }} min</td>
+                    <td>{{ e.max_marks }}</td>
+                    <td>{{ e.booking_start or '-' }}<br>to {{ e.booking_end or '-' }}</td>
+                    <td><span class="badge bg-info text-dark">{{ e.status }}</span></td>
+                    <td>{% if e.id in booked_ids %}<span class="badge bg-success">Booked</span>{% else %}-{% endif %}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="9" class="text-center text-muted py-4">No examinations found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

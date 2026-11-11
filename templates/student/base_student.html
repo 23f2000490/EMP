@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm">
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('student.examinations') }}">Examinations</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('student.slots') }}">Available Slots</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('student.bookings') }}">My Bookings</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('student.results') }}">Results</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('student.profile') }}">Profile</a></li>
+</ul>
+{% block student_content %}{% endblock %}
+{% endblock %}

@@ -345,7 +345,21 @@ def examination_delete(exam_id):
     db.session.commit()
     flash("Examination deleted.", "success")
     return redirect(url_for("admin.examinations"))
-
+@admin_bp.route("/examinations/<int:exam_id>/publish", methods=["POST"])
+@admin_required
+def examination_publish(exam_id):
+    exam = Examination.query.get_or_404(exam_id)
+    if exam.results_published:
+        exam.results_published = False
+        flash(f"Results for '{exam.name}' are now hidden.", "info")
+    else:
+        if exam.status not in ("Closed", "Completed"):
+            flash("Close the examination before publishing results.", "warning")
+            return redirect(url_for("admin.examinations"))
+        exam.results_published = True
+        flash(f"Results for '{exam.name}' are now published.", "success")
+    db.session.commit()
+    return redirect(url_for("admin.examinations"))
 
 # ---------- Rubrics ----------
 

@@ -1,0 +1,40 @@
+{% extends "student/base_student.html" %}
+{% block title %}Result Details{% endblock %}
+{% block student_content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-1">{{ booking.examination.name }}</h4>
+                <p class="text-muted">
+                    {{ booking.examination.course.code }} | {{ booking.slot.slot_date }}
+                    | Examiner: {{ booking.slot.examiner.user.full_name }}
+                </p>
+
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr><th>Criterion</th><th>Awarded</th><th>Max</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for s in evaluation.scores %}
+                        <tr>
+                            <td>{{ s.rubric.criterion_name }}</td>
+                            <td>{{ s.awarded_marks }}</td>
+                            <td>{{ s.rubric.max_marks }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr><th>Total</th><th>{{ evaluation.total_marks }}</th>
+                            <th>{{ booking.examination.max_marks }}</th></tr>
+                    </tfoot>
+                </table>
+
+                <h6>Examiner's remarks</h6>
+                <p>{{ evaluation.remarks or 'No remarks given.' }}</p>
+                <a href="{{ url_for('student.results') }}" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

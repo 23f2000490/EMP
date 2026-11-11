@@ -1,0 +1,47 @@
+{% extends "student/base_student.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block student_content %}
+<h3 class="mb-3">Student Dashboard</h3>
+
+<div class="row g-3 mb-4">
+    {% for label, value in [
+        ('Available Examinations', stats.exams),
+        ('Available Slots', stats.slots),
+        ('Upcoming Examinations', stats.upcoming),
+        ('Booked Slots', stats.booked),
+        ('Published Results', stats.results)] %}
+    <div class="col-6 col-md-4 col-lg">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h2 class="mb-0">{{ value }}</h2>
+                <p class="text-muted mb-0 small">{{ label }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h5>Upcoming Examinations</h5>
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Examination</th><th>Date</th><th>Time</th><th>Examiner</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for b in upcoming %}
+                <tr>
+                    <td>{{ b.examination.name }}</td>
+                    <td>{{ b.slot.slot_date }}</td>
+                    <td>{{ b.slot.start_time.strftime('%H:%M') }} - {{ b.slot.end_time.strftime('%H:%M') }}</td>
+                    <td>{{ b.slot.examiner.user.full_name }}</td>
+                    <td><span class="badge bg-primary">{{ b.status }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">No upcoming examinations.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
