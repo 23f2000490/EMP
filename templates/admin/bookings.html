@@ -26,13 +26,14 @@
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
                 <tr><th>Booking</th><th>Student</th><th>Examination</th><th>Slot Date</th>
-                    <th>Time</th><th>Examiner</th><th>Booked On</th><th>Status</th><th>Action</th></tr>
+                    <th>Time</th><th>Examiner</th><th>Booked On</th><th>Status</th>
+                    <th>Marks</th><th>Action</th></tr>
             </thead>
             <tbody>
                 {% for b in bookings %}
                 <tr>
                     <td>{{ b.id }}</td>
-                    <td>{{ b.student.full_name }} (ID {{ b.student.id }})</td>
+                    <td><a href="{{ url_for('admin.student_history', student_id=b.student.id) }}">{{ b.student.full_name }}</a> (ID {{ b.student.id }})</td>
                     <td>{{ b.examination.name }}</td>
                     <td>{{ b.slot.slot_date }}</td>
                     <td>{{ b.slot.start_time.strftime('%H:%M') }} - {{ b.slot.end_time.strftime('%H:%M') }}</td>
@@ -43,14 +44,18 @@
                         {% elif b.status == 'Completed' %}<span class="badge bg-success">Completed</span>
                         {% else %}<span class="badge bg-secondary">Cancelled</span>{% endif %}
                     </td>
+                    <td>{% if b.evaluation %}{{ b.evaluation.total_marks }} / {{ b.examination.max_marks }}{% else %}-{% endif %}</td>
                     <td>
                         {% if b.status == 'Booked' %}
                         <a href="{{ url_for('admin.booking_reschedule', booking_id=b.id) }}" class="btn btn-sm btn-outline-primary">Reschedule</a>
+                        <form method="POST" action="{{ url_for('admin.booking_cancel', booking_id=b.id) }}" class="d-inline">
+                            <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                        </form>
                         {% else %}-{% endif %}
                     </td>
                 </tr>
                 {% else %}
-                <tr><td colspan="9" class="text-center text-muted py-4">No bookings found.</td></tr>
+                <tr><td colspan="10" class="text-center text-muted py-4">No bookings found.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

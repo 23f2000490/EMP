@@ -314,7 +314,6 @@ def examination_edit(exam_id):
         courses=Course.query.order_by(Course.code).all(),
         examiners=ExaminerProfile.query.filter_by(status="Approved").all())
 
-
 @admin_bp.route("/examinations/<int:exam_id>/status", methods=["POST"])
 @admin_required
 def examination_status(exam_id):
@@ -327,12 +326,22 @@ def examination_status(exam_id):
     if new_status == "Slot Creation" and not exam.examiners:
         flash("Assign at least one examiner (Edit) before opening slot creation.", "warning")
         return redirect(url_for("admin.examinations"))
+
+    if new_status == "Completed":
+        pending = Booking.query.filter_by(exam_id=exam.id, status="Booked").count()
+        if pending:
+            flash(f"{pending} booked student(s) are not evaluated yet. Ask the examiner "
+                  "to evaluate them, or cancel their bookings from the Bookings page.",
+                  "warning")
+            return redirect(url_for("admin.examinations"))
+        for s in exam.slots:
+            if s.status != "Cancelled":
+                s.status = "Completed"
+
     exam.status = new_status
     db.session.commit()
     flash(f"'{exam.name}' is now: {new_status}.", "success")
     return redirect(url_for("admin.examinations"))
-
-
 @admin_bp.route("/examinations/<int:exam_id>/delete", methods=["POST"])
 @admin_required
 def examination_delete(exam_id):
@@ -538,6 +547,17 @@ def booking_reschedule(booking_id):
             flash("Choose a valid slot with free seats.", "danger")
             return redirect(url_for("admin.booking_reschedule", booking_id=booking_id))
 
+        clash = (Booking.query.join(ExaminationSlot, Booking.slot_id == ExaminationSlot.id)
+                 .filter(Booking.student_id == booking.student_id,
+                         Booking.status == "Booked",
+                         Booking.id != booking.id,
+                         ExaminationSlot.slot_date == new_slot.slot_date).all())
+        for other in clash:
+            if (new_slot.start_time < other.slot.end_time
+                    and other.slot.start_time < new_slot.end_time):
+                flash("The student already has another booking that overlaps that slot.", "danger")
+                return redirect(url_for("admin.booking_reschedule", booking_id=booking_id))
+
         old_slot = booking.slot
         old_slot.available_seats += 1
         if old_slot.status == "Full":
@@ -551,3 +571,28 @@ def booking_reschedule(booking_id):
         return redirect(url_for("admin.bookings"))
     return render_template("admin/booking_reschedule.html",
                            booking=booking, options=options)
+@admin_bp.route("/bookings/<int:booking_id>/cancel", methods=["POST"])
+@admin_required
+def booking_cancel(booking_id):
+    booking = Booking.query.get_or_404(booking_id)
+    if booking.status != "Booked":
+        flash("Only bookings with status Booked can be cancelled.", "warning")
+        return redirect(url_for("admin.bookings"))
+    slot = booking.slot
+    booking.status = "Cancelled"
+    booking.cancelled_at = datetime.utcnow()
+    slot.available_seats += 1
+    if slot.status == "Full":
+        slot.status = "Available"
+    db.session.commit()
+    flash("Booking cancelled.", "success")
+    return redirect(url_for("admin.bookings"))
+
+
+@admin_bp.route("/students/<int:student_id>")
+@admin_required
+def student_history(student_id):
+    student = User.query.filter_by(id=student_id, role="Student").first_or_404()
+    rows = (Booking.query.filter_by(student_id=student.id)
+            .order_by(Booking.id.desc()).all())
+    return render_template("admin/student_history.html", student=student, bookings=rows)

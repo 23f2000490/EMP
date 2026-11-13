@@ -185,8 +185,21 @@ def book_slot(slot_id):
             flash("This slot overlaps another examination you have booked.", "danger")
             return redirect(url_for("student.slots"))
 
+        # Take the seat atomically: succeeds only if a seat is still free
+    taken = (ExaminationSlot.query
+             .filter(ExaminationSlot.id == slot.id,
+                     ExaminationSlot.status == "Available",
+                     ExaminationSlot.available_seats > 0)
+             .update({"available_seats": ExaminationSlot.available_seats - 1},
+                     synchronize_session=False))
+    if taken == 0:
+        db.session.rollback()
+        flash("Sorry, this slot was just filled.", "danger")
+        return redirect(url_for("student.slots"))
+
     db.session.add(Booking(student_id=g.user.id, slot_id=slot.id, exam_id=exam.id))
-    slot.available_seats -= 1
+    db.session.flush()
+    db.session.refresh(slot)
     if slot.available_seats == 0:
         slot.status = "Full"
     db.session.commit()

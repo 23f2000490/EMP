@@ -8,3 +8,4 @@ instance/
 .env
 .vscode/
 .DS_Store
+run_tests.py

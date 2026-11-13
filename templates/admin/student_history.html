@@ -1,0 +1,45 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Student History{% endblock %}
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-0">{{ student.full_name }}</h3>
+        <small class="text-muted">Student ID {{ student.id }} | {{ student.email }}</small>
+    </div>
+    <a href="{{ url_for('admin.students') }}" class="btn btn-secondary">Back</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Booking</th><th>Examination</th><th>Slot</th><th>Examiner</th>
+                    <th>Booked On</th><th>Cancelled On</th><th>Status</th>
+                    <th>Marks</th><th>Remarks</th><th>Results</th></tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td>{{ b.id }}</td>
+                    <td>{{ b.examination.name }}<br><small class="text-muted">{{ b.examination.course.code }}</small></td>
+                    <td>{{ b.slot.slot_date }}<br>{{ b.slot.start_time.strftime('%H:%M') }} - {{ b.slot.end_time.strftime('%H:%M') }}</td>
+                    <td>{{ b.slot.examiner.user.full_name }}</td>
+                    <td>{{ b.booking_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ b.cancelled_at.strftime('%Y-%m-%d %H:%M') if b.cancelled_at else '-' }}</td>
+                    <td>
+                        {% if b.status == 'Booked' %}<span class="badge bg-primary">Booked</span>
+                        {% elif b.status == 'Completed' %}<span class="badge bg-success">Completed</span>
+                        {% else %}<span class="badge bg-secondary">Cancelled</span>{% endif %}
+                    </td>
+                    <td>{% if b.evaluation %}{{ b.evaluation.total_marks }} / {{ b.examination.max_marks }}{% else %}-{% endif %}</td>
+                    <td>{{ b.evaluation.remarks or '-' if b.evaluation else '-' }}</td>
+                    <td>{% if b.evaluation %}{{ 'Published' if b.examination.results_published else 'Not published' }}{% else %}-{% endif %}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="10" class="text-center text-muted py-4">This student has no bookings.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

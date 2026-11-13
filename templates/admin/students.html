@@ -18,7 +18,7 @@
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
                 <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th>
-                    <th>Department</th><th>Bookings</th><th>Joined</th></tr>
+                    <th>Department</th><th>Bookings</th><th>Joined</th><th>Action</th></tr>
             </thead>
             <tbody>
                 {% for s in students %}
@@ -30,9 +30,10 @@
                     <td>{{ s.department or '-' }}</td>
                     <td>{{ s.bookings|length }}</td>
                     <td>{{ s.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td><a href="{{ url_for('admin.student_history', student_id=s.id) }}" class="btn btn-sm btn-outline-primary">History</a></td>
                 </tr>
                 {% else %}
-                <tr><td colspan="7" class="text-center text-muted py-4">No students found.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">No students found.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

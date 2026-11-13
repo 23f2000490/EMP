@@ -7,43 +7,9 @@
 <div class="card shadow-sm mb-4">
     <div class="table-responsive">
         <table class="table table-hover mb-0 align-middle">
-            <thead class="table-light">
+                        <thead class="table-light">
                 <tr><th>Booking</th><th>Examination</th><th>Date</th><th>Time</th>
-                    <th>Examiner</th><th>Booked On</th><th>Status</th><th>Action</th></tr>
-            </thead>
-            <tbody>
-                {% for b in upcoming %}
-                <tr>
-                    <td>{{ b.id }}</td>
-                    <td>{{ b.examination.name }}<br><small class="text-muted">{{ b.examination.course.code }}</small></td>
-                    <td>{{ b.slot.slot_date }}</td>
-                    <td>{{ b.slot.start_time.strftime('%H:%M') }} - {{ b.slot.end_time.strftime('%H:%M') }}</td>
-                    <td>{{ b.slot.examiner.user.full_name }}</td>
-                    <td>{{ b.booking_date.strftime('%Y-%m-%d %H:%M') }}</td>
-                    <td><span class="badge bg-primary">Booked</span></td>
-                    <td>
-                        {% if can_cancel[b.id] %}
-                        <form method="POST" action="{{ url_for('student.cancel_booking', booking_id=b.id) }}">
-                            <button class="btn btn-sm btn-outline-danger">Cancel</button>
-                        </form>
-                        {% else %}-{% endif %}
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="8" class="text-center text-muted py-4">No active bookings.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<h5>History</h5>
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0 align-middle">
-            <thead class="table-light">
-                <tr><th>Booking</th><th>Examination</th><th>Date</th><th>Time</th>
-                    <th>Booked On</th><th>Status</th><th>Result</th></tr>
+                    <th>Booked On</th><th>Status</th><th>Evaluated On</th><th>Result</th></tr>
             </thead>
             <tbody>
                 {% for b in history %}
@@ -58,6 +24,11 @@
                         {% else %}<span class="badge bg-secondary">Cancelled</span>{% endif %}
                     </td>
                     <td>
+                        {% if b.evaluation %}{{ b.evaluation.evaluated_at.strftime('%Y-%m-%d') }}
+                        {% elif b.cancelled_at %}Cancelled {{ b.cancelled_at.strftime('%Y-%m-%d') }}
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>
                         {% if b.status == 'Completed' and b.evaluation and b.examination.results_published %}
                         <a href="{{ url_for('student.result_detail', booking_id=b.id) }}" class="btn btn-sm btn-outline-primary">View</a>
                         {% elif b.status == 'Completed' %}<span class="text-muted small">Not published</span>
@@ -65,7 +36,7 @@
                     </td>
                 </tr>
                 {% else %}
-                <tr><td colspan="7" class="text-center text-muted py-4">No history yet.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">No history yet.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
